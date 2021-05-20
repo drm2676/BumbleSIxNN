@@ -863,7 +863,29 @@ All.NNxSI.glmm=glmer(cbind(blue,not.blue)~pre.post*Neonic*Social_Cue+(1|Colony/b
 summary(All.NNxSI.glmm)
 Anova(All.NNxSI.glmm)
 
-#just day 1, neonic (and social cue) on blue bias
+#> Anova(All.NNxSI.glmm)
+#Analysis of Deviance Table (Type II Wald chisquare tests)
+
+#Response: cbind(blue, not.blue)
+  #                           Chisq Df Pr(>Chisq)    
+#pre.post                   27.7826  1  1.357e-07 ***
+#Neonic                      1.6204  1     0.2030    
+#Social_Cue                  1.3303  2     0.5142    
+#pre.post:Neonic             1.9463  1     0.1630    
+#pre.post:Social_Cue        88.0985  2  < 2.2e-16 ***
+#Neonic:Social_Cue           2.6808  2     0.2617    
+#pre.post:Neonic:Social_Cue  1.9234  2     0.3822    
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+just.neonic=all.colorcast %>%
+  filter(Neonic=="y")
+
+justneonic.NNxSI.glmm=glmer(cbind(blue,not.blue)~pre.post*Social_Cue+(1|Colony/bee), family=binomial, data=just.neonic)
+summary(justneonic.NNxSI.glmm)
+Anova(justneonic.NNxSI.glmm)
+
+#just day 1, neonic (and social cue) on blue bias (Berry look here for Bee Paper 2)
 just.Day1=all.colorcast %>%
   filter(pre.post=="pre")
 
@@ -880,6 +902,20 @@ just.Day1M=just.Day1 %>%
 Day1M.NN.glmm=glmer(cbind(blue,not.blue)~Neonic+(1|Colony/bee), family=binomial, data=just.Day1M)
 summary(Day1M.NN.glmm)
 Anova(Day1M.NN.glmm)
+
+just.Day1H=just.Day1 %>%
+  filter(Social_Cue=="honest")
+
+Day1H.NN.glmm=glmer(cbind(blue,not.blue)~Neonic+(1|Colony/bee), family=binomial, data=just.Day1H)
+summary(Day1H.NN.glmm)
+Anova(Day1H.NN.glmm)
+
+just.Day1C=just.Day1 %>%
+  filter(Social_Cue=="control")
+
+Day1C.NN.glmm=glmer(cbind(blue,not.blue)~Neonic+(1|Colony/bee), family=binomial, data=just.Day1C)
+summary(Day1C.NN.glmm)
+Anova(Day1C.NN.glmm)
 
 just.naive=all.colorcast %>%
   filter(Neonic=="n")
@@ -1021,11 +1057,93 @@ pre.plot
 
 ```
 
-#Donna Maney's Anovas
-You will want to reconsider some claims that are currently not supported by your data analysis. Specifically, you say that the bees used the social cues. We don’t currently have evidence of that, at least that I could find in the paper. To show that the bees are using social cues on day 1, you'll need to show that the honest bees are making more visits to the rewarded flowers than the control group, and/or the misled bees are making fewer. I would do a one-way ANOVA on the day 1 data, with social cue (3 levels) as the fixed factor and preference for the rewarded flower as the response variable. Then, if  you find a significant effect of social cue on preference, you would perform pairwise tests (control vs. honest and control vs. misleading). Just looking at the graphs, it’s possible you might have an effect for Study 1 but it does not look like the bees in Study 2 are using the cues. It seems like a big problem that the honest-cued bees are not preferring the rewarded flowers as much as the control bees.
+
+#Test of Homogeneity of Variance
+Are the Neonic bees (across social cue treatments) more similar to one another than the not-neonic bees?
+^A way of getting at the question- are  all the pesticide exposed bees acting the same?
+
+
 ```{r}
+#need a data set that pools all the per-bee data for NN and not-NN, but separates all of that out by colony (since test can't account for non-independence of bees related by colony)
+
+pre.colorcast= all.colorcast %>%
+  filter(pre.post=="pre") %>%
+  mutate(BluePref=blue/(blue+not.blue))
+
+Col1.pre= filter(pre.colorcast, Colony==1)
+#n=45
+Col2.pre=filter(pre.colorcast,Colony==2)
+#n=52
+Col3.pre=filter(pre.colorcast, Colony==3)
+#n=61
+Col4.pre=filter(pre.colorcast, Colony==4)
+#n=71
+#pre.colorcast has a few NAs in it, which is why theses n's add up to 229 but pre.colorcast has 232 rows
+
+#fligner-Killeen test
+require(stats)
+fligner.test(BluePref~Neonic, pre.colorcast)
+#data:  BluePref by Neonic
+#Fligner-Killeen:med chi-squared = 0.2373, df = 1, p-value = 0.6262
+
+#Colony 1
+fligner.test(BluePref~Neonic, Col1.pre)
+#Colony 2
+fligner.test(BluePref~Neonic, Col2.pre)
+#Colony 3
+fligner.test(BluePref~Neonic, Col3.pre)
+#Colony 4
+fligner.test(BluePref~Neonic, Col4.pre)
+
+#none are sig differemt
+
+t=filter(Col1.pre, Neonic=="y")
+#21
+tn=filter(Col1.pre, Neonic=="n")
+#24
+t2=filter(Col2.pre, Neonic=="y")
+#24
+t2n=filter(Col2.pre, Neonic=="n")
+#28
+t3=filter(Col3.pre, Neonic=="y")  #**Can I even include colony 3 in this?
+#0
+t3n=filter(Col3.pre, Neonic=="n")
+#61
+t4=filter(Col4.pre, Neonic=="y")
+#34
+t4n=filter(Col4.pre, Neonic=="n")
+#35
 
 ```
+Results of fligner tests by colony:
+> #Colony 1
+> fligner.test(BluePref~Neonic, Col1.pre)
+
+	Fligner-Killeen test of homogeneity of variances
+
+data:  BluePref by Neonic
+Fligner-Killeen:med chi-squared = 0.062827, df = 1, p-value = 0.8021
+
+> #Colony 2
+> fligner.test(BluePref~Neonic, Col2.pre)
+
+	Fligner-Killeen test of homogeneity of variances
+
+data:  BluePref by Neonic
+Fligner-Killeen:med chi-squared = 0.063218, df = 1, p-value = 0.8015
+
+> #Colony 3
+> fligner.test(BluePref~Neonic, Col3.pre)
+Error in fligner.test.default(c(0.5, 0.619047619047619, 0.545454545454545,  : 
+  all observations are in the same group
+> #Colony 4
+> fligner.test(BluePref~Neonic, Col4.pre)
+
+	Fligner-Killeen test of homogeneity of variances
+
+data:  BluePref by Neonic
+Fligner-Killeen:med chi-squared = 0.060475, df = 1, p-value = 0.8057
+
 
 
 
@@ -1511,6 +1629,8 @@ RewardsPlotAvgdCI=ggplot(data=c3, aes(x=pre.post, y=AvgPrePost, group=Neonic, co
 #geom_errorbar(aes(ymin=bootLO, ymax=bootHI, width=.1), position=pd)
 
 RewardsPlotAvgdCI
+
+
 
 ```
 
