@@ -1147,6 +1147,7 @@ Fligner-Killeen:med chi-squared = 0.060475, df = 1, p-value = 0.8057
 
 
 
+
 #How many bees?
 ```{r}
 #overall
