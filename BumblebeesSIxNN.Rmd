@@ -878,8 +878,42 @@ Anova(All.NNxSI.glmm)
 #---
 #Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-just.neonic=all.colorcast %>%
-  filter(Neonic=="y")
+#By social cue treatment
+just.misleading=all.colorcast %>%
+  filter(Social_Cue=="misleading")
+
+Misleading.NNxSI.glmm=glmer(cbind(blue,not.blue)~pre.post*Neonic+(1|Colony/bee), family=binomial, data=just.misleading)
+summary(Misleading.NNxSI.glmm)
+Anova(Misleading.NNxSI.glmm)
+
+#> Anova(Misleading.NNxSI.glmm)
+#Analysis of Deviance Table (Type II Wald chisquare tests)
+
+#Response: cbind(blue, not.blue)
+#                  Chisq Df Pr(>Chisq)    
+#pre.post        20.5790  1  5.722e-06 ***
+#Neonic           2.6510  1     0.1035    
+#pre.post:Neonic  0.1745  1     0.6762
+
+#So Neonics did not have an effect on bee's memory of social cues
+
+just.control=all.colorcast %>%
+  filter(Social_Cue=="control")
+
+control.NNxSI.glmm=glmer(cbind(blue,not.blue)~pre.post*Neonic+(1|Colony/bee), family=binomial, data=just.control)
+summary(control.NNxSI.glmm)
+Anova(control.NNxSI.glmm)
+#Not sig
+
+just.honest=all.colorcast %>%
+  filter(Social_Cue=="honest")
+
+honest.NNxSI.glmm=glmer(cbind(blue,not.blue)~pre.post*Neonic+(1|Colony/bee), family=binomial, data=just.honest)
+summary(honest.NNxSI.glmm)
+Anova(honest.NNxSI.glmm)
+#Not sig
+
+#Just Neonics
 
 justneonic.NNxSI.glmm=glmer(cbind(blue,not.blue)~pre.post*Social_Cue+(1|Colony/bee), family=binomial, data=just.neonic)
 summary(justneonic.NNxSI.glmm)
@@ -917,6 +951,48 @@ Day1C.NN.glmm=glmer(cbind(blue,not.blue)~Neonic+(1|Colony/bee), family=binomial,
 summary(Day1C.NN.glmm)
 Anova(Day1C.NN.glmm)
 
+#Just day 2
+just.Day2=all.colorcast %>%
+  filter(pre.post=="post")
+
+Day2.NNxSI.glmm=glmer(cbind(blue,not.blue)~Neonic*Social_Cue+(1|Colony/bee), family=binomial, data=just.Day2)
+summary(Day2.NNxSI.glmm)
+Anova(Day2.NNxSI.glmm)
+#> Anova(Day2.NNxSI.glmm)
+#Analysis of Deviance Table (Type II Wald chisquare tests)
+
+#Response: cbind(blue, not.blue)
+#                   Chisq Df Pr(>Chisq)  
+#Neonic            1.0368  1    0.30857  
+#Social_Cue        6.2672  2    0.04356 *
+#Neonic:Social_Cue 1.2461  2    0.53631  
+
+just.Day2M=just.Day2 %>%
+  filter(Social_Cue=="misleading")
+
+Day2M.NN.glmm=glmer(cbind(blue,not.blue)~Neonic+(1|Colony/bee), family=binomial, data=just.Day2M)
+summary(Day2M.NN.glmm)
+Anova(Day2M.NN.glmm)
+#not sig
+
+just.Day2H=just.Day2 %>%
+  filter(Social_Cue=="honest")
+
+Day2H.NN.glmm=glmer(cbind(blue,not.blue)~Neonic+(1|Colony/bee), family=binomial, data=just.Day2H)
+summary(Day2H.NN.glmm)
+Anova(Day2H.NN.glmm)
+#not sig
+
+just.Day2C=just.Day2 %>%
+  filter(Social_Cue=="control")
+
+Day2C.NN.glmm=glmer(cbind(blue,not.blue)~Neonic+(1|Colony/bee), family=binomial, data=just.Day2C)
+summary(Day2C.NN.glmm)
+Anova(Day2C.NN.glmm)
+#not sig
+
+
+#Just Naive
 just.naive=all.colorcast %>%
   filter(Neonic=="n")
 
@@ -1091,7 +1167,7 @@ fligner.test(BluePref~Neonic, Col1.pre)
 #Colony 2
 fligner.test(BluePref~Neonic, Col2.pre)
 #Colony 3
-fligner.test(BluePref~Neonic, Col3.pre)
+#fligner.test(BluePref~Neonic, Col3.pre)
 #Colony 4
 fligner.test(BluePref~Neonic, Col4.pre)
 
