@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #knitr::opts_chunk$set(root.dir='/tmp')
-setwd("/Users/drmcder/Documents/GitHub/BumbleSIxNN")
+# setwd("/Users/drmcder/Documents/GitHub/BumbleSIxNN")
 require(ggplot2)
 require(dplyr)
 require(readr)
@@ -350,7 +350,7 @@ Simp_BeeData=select(BeeData, Enclosure, bee, Colony, Neonic, Treatment_Type) %>%
 
 
 #October Data
-```{r}
+```{r October Data}
 #Week 1
 Tre.1407=read.csv("foragingdata_2019.9.24.1407.csv")
 colnames(Tre.1407) = c("date", "t.day", "flower", "bee", "t.forage", "reward")
@@ -531,7 +531,7 @@ OctFull.Data.Colors=mutate(OctFull.Data.Colors, Colony=4)
 
 #How many visits did each bee make in its half hour treatment or test?
 
-```{r}
+```{r visit counter}
 
 #counting visits and rewards during Treatment runs
 #tbl_df(Full.Treatment1)
