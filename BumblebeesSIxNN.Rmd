@@ -856,11 +856,143 @@ all.colorcast=dcast(all.colormelt, bee+Colony+Neonic+Social_Cue+pre.post~new.col
 summary(all.colorcast)
 
 #Running models!!!
+#Berry look here for Bee Paper 2
 
-All.NNxSI.glmm=glmer(cbind(blue,not.blue)~pre.post*Neonic*Social_Cue+(1|bee), family=binomial, data=all.colorcast)
+#Both days, social cues and neonic treatment on blue bias
+All.NNxSI.glmm=glmer(cbind(blue,not.blue)~pre.post*Neonic*Social_Cue+(1|Colony/bee), family=binomial, data=all.colorcast)
 summary(All.NNxSI.glmm)
+Anova(All.NNxSI.glmm)
+
+#> Anova(All.NNxSI.glmm)
+#Analysis of Deviance Table (Type II Wald chisquare tests)
+
+#Response: cbind(blue, not.blue)
+  #                           Chisq Df Pr(>Chisq)    
+#pre.post                   27.7826  1  1.357e-07 ***
+#Neonic                      1.6204  1     0.2030    
+#Social_Cue                  1.3303  2     0.5142    
+#pre.post:Neonic             1.9463  1     0.1630    
+#pre.post:Social_Cue        88.0985  2  < 2.2e-16 ***
+#Neonic:Social_Cue           2.6808  2     0.2617    
+#pre.post:Neonic:Social_Cue  1.9234  2     0.3822    
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+#By social cue treatment
+just.misleading=all.colorcast %>%
+  filter(Social_Cue=="misleading")
+
+Misleading.NNxSI.glmm=glmer(cbind(blue,not.blue)~pre.post*Neonic+(1|Colony/bee), family=binomial, data=just.misleading)
+summary(Misleading.NNxSI.glmm)
+Anova(Misleading.NNxSI.glmm)
+
+#> Anova(Misleading.NNxSI.glmm)
+#Analysis of Deviance Table (Type II Wald chisquare tests)
+
+#Response: cbind(blue, not.blue)
+#                  Chisq Df Pr(>Chisq)    
+#pre.post        20.5790  1  5.722e-06 ***
+#Neonic           2.6510  1     0.1035    
+#pre.post:Neonic  0.1745  1     0.6762
+
+#So Neonics did not have an effect on bee's memory of social cues
+
+just.control=all.colorcast %>%
+  filter(Social_Cue=="control")
+
+control.NNxSI.glmm=glmer(cbind(blue,not.blue)~pre.post*Neonic+(1|Colony/bee), family=binomial, data=just.control)
+summary(control.NNxSI.glmm)
+Anova(control.NNxSI.glmm)
+#Not sig
+
+just.honest=all.colorcast %>%
+  filter(Social_Cue=="honest")
+
+honest.NNxSI.glmm=glmer(cbind(blue,not.blue)~pre.post*Neonic+(1|Colony/bee), family=binomial, data=just.honest)
+summary(honest.NNxSI.glmm)
+Anova(honest.NNxSI.glmm)
+#Not sig
+
+#Just Neonics
+
+justneonic.NNxSI.glmm=glmer(cbind(blue,not.blue)~pre.post*Social_Cue+(1|Colony/bee), family=binomial, data=just.neonic)
+summary(justneonic.NNxSI.glmm)
+Anova(justneonic.NNxSI.glmm)
+
+#just day 1, neonic (and social cue) on blue bias (Berry look here for Bee Paper 2)
+just.Day1=all.colorcast %>%
+  filter(pre.post=="pre")
+
+Day1.NNxSI.glmm=glmer(cbind(blue,not.blue)~Neonic*Social_Cue+(1|Colony/bee), family=binomial, data=just.Day1)
+summary(Day1.NNxSI.glmm)
+Anova(Day1.NNxSI.glmm)
+#no effect, but I think that's becuase the effect for misleading bees opposes the effect on honest bees
+
+#just day 1, neonic on blue bias for misleading treatment bees
+
+just.Day1M=just.Day1 %>%
+  filter(Social_Cue=="misleading")
+
+Day1M.NN.glmm=glmer(cbind(blue,not.blue)~Neonic+(1|Colony/bee), family=binomial, data=just.Day1M)
+summary(Day1M.NN.glmm)
+Anova(Day1M.NN.glmm)
+
+just.Day1H=just.Day1 %>%
+  filter(Social_Cue=="honest")
+
+Day1H.NN.glmm=glmer(cbind(blue,not.blue)~Neonic+(1|Colony/bee), family=binomial, data=just.Day1H)
+summary(Day1H.NN.glmm)
+Anova(Day1H.NN.glmm)
+
+just.Day1C=just.Day1 %>%
+  filter(Social_Cue=="control")
+
+Day1C.NN.glmm=glmer(cbind(blue,not.blue)~Neonic+(1|Colony/bee), family=binomial, data=just.Day1C)
+summary(Day1C.NN.glmm)
+Anova(Day1C.NN.glmm)
+
+#Just day 2
+just.Day2=all.colorcast %>%
+  filter(pre.post=="post")
+
+Day2.NNxSI.glmm=glmer(cbind(blue,not.blue)~Neonic*Social_Cue+(1|Colony/bee), family=binomial, data=just.Day2)
+summary(Day2.NNxSI.glmm)
+Anova(Day2.NNxSI.glmm)
+#> Anova(Day2.NNxSI.glmm)
+#Analysis of Deviance Table (Type II Wald chisquare tests)
+
+#Response: cbind(blue, not.blue)
+#                   Chisq Df Pr(>Chisq)  
+#Neonic            1.0368  1    0.30857  
+#Social_Cue        6.2672  2    0.04356 *
+#Neonic:Social_Cue 1.2461  2    0.53631  
+
+just.Day2M=just.Day2 %>%
+  filter(Social_Cue=="misleading")
+
+Day2M.NN.glmm=glmer(cbind(blue,not.blue)~Neonic+(1|Colony/bee), family=binomial, data=just.Day2M)
+summary(Day2M.NN.glmm)
+Anova(Day2M.NN.glmm)
+#not sig
+
+just.Day2H=just.Day2 %>%
+  filter(Social_Cue=="honest")
+
+Day2H.NN.glmm=glmer(cbind(blue,not.blue)~Neonic+(1|Colony/bee), family=binomial, data=just.Day2H)
+summary(Day2H.NN.glmm)
+Anova(Day2H.NN.glmm)
+#not sig
+
+just.Day2C=just.Day2 %>%
+  filter(Social_Cue=="control")
+
+Day2C.NN.glmm=glmer(cbind(blue,not.blue)~Neonic+(1|Colony/bee), family=binomial, data=just.Day2C)
+summary(Day2C.NN.glmm)
+Anova(Day2C.NN.glmm)
+#not sig
 
 
+#Just Naive
 just.naive=all.colorcast %>%
   filter(Neonic=="n")
 
@@ -874,6 +1006,7 @@ summary(Colony.glmm)
 SI.glmm=glmer(cbind(blue,not.blue)~pre.post*Social_Cue+(1|Colony/bee), family=binomial, data=just.naive)
 summary(SI.glmm)
 Anova(SI.glmm)
+
 
 #Prepping data to graph
 
@@ -911,6 +1044,7 @@ all.RewardsPerTreatment1=bind_cols(all.RewardsPerTreatment1,all.RpTUpLow)
 class(all.RewardsPerTreatment1$pre.post)
 all.RewardsPerTreatment1$pre.post = factor(all.RewardsPerTreatment1$pre.post, levels(factor(all.RewardsPerTreatment1$pre.post))[c(2,1)])
 
+#Re-ordering factors a la Alva's advice
 all.RewardsPerTreatment1$Social_Cue = factor(all.RewardsPerTreatment1$Social_Cue, levels(factor(all.RewardsPerTreatment1$Social_Cue))[c(1,3,2)])
 
 #Graphing
@@ -936,7 +1070,7 @@ names(PestiFacetLabels) <- c("n", "y")
 # Create the plot
 
 
-all.plot2 <- ggplot(all.RewardsPerTreatment1, aes(group=Social_Cue, color = Social_Cue, y = SumBlueRewards/SumTotalRewards, x = pre.post)) + geom_point( position=pd,size=3) + geom_line(aes(group = Social_Cue),, size=3, position=pd) + labs(x="Day of Foraging", y="Proportion of Visits to Blue Flowers", title="Proportion of Visits to Blue Flowers by Day") + theme_classic() + geom_errorbar(aes(ymin=lower, ymax=upper, width=.1), position=pd) + coord_cartesian(xlim = c(1.4,1.9), ylim = c(0.3,0.9))+ scale_color_hue() + facet_grid(.~Neonic, labeller = labeller(Neonic = PestiFacetLabels)) + geom_hline(yintercept=0.5,linetype="dashed", color = "black")
+all.plot2 <- ggplot(all.RewardsPerTreatment1, aes(group=Social_Cue, color = Social_Cue, y = SumBlueRewards/SumTotalRewards, x = pre.post)) + geom_point( position=pd,size=3) + geom_line(aes(group = Social_Cue),, size=3, position=pd) + labs(x="Day of Foraging", y="Proportion of Visits to Blue Flowers", title="Proportion of Visits to Blue Flowers by Day") + theme_classic() + geom_errorbar(aes(ymin=lower, ymax=upper, width=.1), position=pd) + coord_cartesian(xlim = c(1.4,1.9), ylim = c(0.3,0.9))+ scale_color_hue() + facet_grid(.~Neonic, labeller = labeller(Neonic = PestiFacetLabels)) + geom_hline(yintercept=0.5,linetype="dashed", color = "black")+scale_color_manual(values = c(control="darkgoldenrod", honest="cornflowerblue", misleading="darkolivegreen4"))
 
 
 
@@ -998,6 +1132,97 @@ pre.plot
 
 
 ```
+
+
+#Test of Homogeneity of Variance
+Are the Neonic bees (across social cue treatments) more similar to one another than the not-neonic bees?
+^A way of getting at the question- are  all the pesticide exposed bees acting the same?
+
+
+```{r}
+#need a data set that pools all the per-bee data for NN and not-NN, but separates all of that out by colony (since test can't account for non-independence of bees related by colony)
+
+pre.colorcast= all.colorcast %>%
+  filter(pre.post=="pre") %>%
+  mutate(BluePref=blue/(blue+not.blue))
+
+Col1.pre= filter(pre.colorcast, Colony==1)
+#n=45
+Col2.pre=filter(pre.colorcast,Colony==2)
+#n=52
+Col3.pre=filter(pre.colorcast, Colony==3)
+#n=61
+Col4.pre=filter(pre.colorcast, Colony==4)
+#n=71
+#pre.colorcast has a few NAs in it, which is why theses n's add up to 229 but pre.colorcast has 232 rows
+
+#fligner-Killeen test
+require(stats)
+fligner.test(BluePref~Neonic, pre.colorcast)
+#data:  BluePref by Neonic
+#Fligner-Killeen:med chi-squared = 0.2373, df = 1, p-value = 0.6262
+
+#Colony 1
+fligner.test(BluePref~Neonic, Col1.pre)
+#Colony 2
+fligner.test(BluePref~Neonic, Col2.pre)
+#Colony 3
+#fligner.test(BluePref~Neonic, Col3.pre)
+#Colony 4
+fligner.test(BluePref~Neonic, Col4.pre)
+
+#none are sig differemt
+
+t=filter(Col1.pre, Neonic=="y")
+#21
+tn=filter(Col1.pre, Neonic=="n")
+#24
+t2=filter(Col2.pre, Neonic=="y")
+#24
+t2n=filter(Col2.pre, Neonic=="n")
+#28
+t3=filter(Col3.pre, Neonic=="y")  #**Can I even include colony 3 in this?
+#0
+t3n=filter(Col3.pre, Neonic=="n")
+#61
+t4=filter(Col4.pre, Neonic=="y")
+#34
+t4n=filter(Col4.pre, Neonic=="n")
+#35
+
+```
+Results of fligner tests by colony:
+> #Colony 1
+> fligner.test(BluePref~Neonic, Col1.pre)
+
+	Fligner-Killeen test of homogeneity of variances
+
+data:  BluePref by Neonic
+Fligner-Killeen:med chi-squared = 0.062827, df = 1, p-value = 0.8021
+
+> #Colony 2
+> fligner.test(BluePref~Neonic, Col2.pre)
+
+	Fligner-Killeen test of homogeneity of variances
+
+data:  BluePref by Neonic
+Fligner-Killeen:med chi-squared = 0.063218, df = 1, p-value = 0.8015
+
+> #Colony 3
+> fligner.test(BluePref~Neonic, Col3.pre)
+Error in fligner.test.default(c(0.5, 0.619047619047619, 0.545454545454545,  : 
+  all observations are in the same group
+> #Colony 4
+> fligner.test(BluePref~Neonic, Col4.pre)
+
+	Fligner-Killeen test of homogeneity of variances
+
+data:  BluePref by Neonic
+Fligner-Killeen:med chi-squared = 0.060475, df = 1, p-value = 0.8057
+
+
+
+
 
 #How many bees?
 ```{r}
@@ -1482,6 +1707,8 @@ RewardsPlotAvgdCI=ggplot(data=c3, aes(x=pre.post, y=AvgPrePost, group=Neonic, co
 
 RewardsPlotAvgdCI
 
+
+
 ```
 
 
@@ -1782,12 +2009,12 @@ SameDay2OrderPlot
 
 
 
-Day1OrderPlot=ggplot(data=Spread.Day1order, aes(group=Social_Cue, color=Social_Cue, x=Order, y=BluePref)) + facet_grid(.~Neonic) + geom_point(position=pd, size=1) + geom_line(aes(group=Social_Cue), position=pd) +theme_classic()  + labs(title="Bees' Preference for Blue Flowers on Day 1")
+Day1OrderPlot=ggplot(data=Spread.Day1order, aes(group=Social_Cue, color=Social_Cue, x=Order, y=BluePref)) + facet_grid(.~Neonic) + geom_point(position=pd, size=1) + geom_line(aes(group=Social_Cue), position=pd) +theme_classic()  + labs(title="Bees' Preference for Blue Flowers on Day 1")+ geom_hline(yintercept=0.5,linetype="dashed", color = "black")+scale_color_manual(values = c(control="darkgoldenrod", honest="cornflowerblue", misleading="darkolivegreen4"))
 Day1OrderPlot
 
 #same plot as above, but artificialy limited to the average number of visits that at leat 10 bees made (i.e. up to 6 on x axis)
 
-SameDay1OrderPlot=ggplot(data=Spread.Day1order, aes(group=Social_Cue, color=Social_Cue, x=Order, y=BluePref)) + facet_grid(.~Neonic) + geom_point(position=pd, size=1) + geom_line(aes(group=Social_Cue), position=pd) +theme_classic() + coord_cartesian(xlim = c(1,5))+ labs(title="Bees' Preference for Blue Flowers on Day 1, Choices 1-5")
+SameDay1OrderPlot=ggplot(data=Spread.Day1order, aes(group=Social_Cue, color=Social_Cue, x=Order, y=BluePref)) + facet_grid(.~Neonic) + geom_point(position=pd, size=1) + geom_line(aes(group=Social_Cue), position=pd) +theme_classic() + coord_cartesian(xlim = c(1,5))+ labs(title="Bees' Preference for Blue Flowers on Day 1, Choices 1-5")+ geom_hline(yintercept=0.5,linetype="dashed", color = "black")+scale_color_manual(values = c(control="darkgoldenrod", honest="cornflowerblue", misleading="darkolivegreen4"))
 SameDay1OrderPlot
 
 
@@ -1801,6 +2028,7 @@ Allbee.Order.Day1=select(Day1order, bee, Neonic, Social_Cue, Order,color)
 AllbeeDay1Plot=ggplot(data=Allbee.Order.Day1, aes(group=bee, color=bee, x=Order, y=color)) + facet_grid(Neonic~Social_Cue) + geom_point( size=1) + geom_line(aes(group=bee)) +theme_classic()+ guides(color="none")
 #AllbeeDay1Plot
 #+ coord_cartesian(xlim = c(1,5))
+#herehere
 ```
 
 
@@ -1852,6 +2080,127 @@ Day1SwitchPlot
     #I would need the number of visits to green after a bee has been to both blue and green.
 ```
 
+#First reward, no Neonics
+```{r}
+FirstFlowerDay1=Spread.Day1order %>%
+  filter(Order==1, Neonic=="n") %>%
+  mutate(Allfirsts=sum(blue.treatment+green.treatment))
+
+FirstFlowerDay2=Spread.Day2order %>%
+  filter(Order==1, Neonic=="n") %>%
+  mutate(Allfirsts=sum(blue.test+violet.test))
+
+
+#Confidence Intervals
+FirstFlower.Day1.confint=binom.confint(x=FirstFlowerDay1$blue.treatment, n=FirstFlowerDay1$Allfirsts, conf.level=.95, methods = "agresti-coull")
+FirstFlower.Day1.confint
+#selecting the upper and lower bounds from the conf int table to add to RewardsPerTreatment
+FirstFlower.Day1.confint.uplow=select(FirstFlower.Day1.confint, lower, upper, mean )
+FirstFlowerDay1=bind_cols(FirstFlowerDay1,FirstFlower.Day1.confint.uplow)
+
+FirstFlower.Day2.confint=binom.confint(x=FirstFlowerDay2$blue.test, n=FirstFlowerDay1$Allfirsts, conf.level=.95, methods = "agresti-coull")
+FirstFlower.Day2.confint
+#selecting the upper and lower bounds from the conf int table to add to RewardsPerTreatment
+FirstFlower.Day2.confint.uplow=select(FirstFlower.Day2.confint, lower, upper, mean )
+FirstFlowerDay2=bind_cols(FirstFlowerDay2,FirstFlower.Day2.confint.uplow)
+
+FirstFlowerDay1Plot<- ggplot(FirstFlowerDay1, aes(y = BluePref, x = Social_Cue)) + geom_point( position=pd,size=3) + labs(x="Social Cue", y="Proportion of Bees that First Visited Blue Flower", title="Proportion of Foragers that Chose Blue Flower on First Visit to Flower on Day 1") + theme_classic() + scale_color_hue() + geom_hline(yintercept=0.5,linetype="dashed", color = "black")+ geom_errorbar(aes(ymin=lower, ymax=upper, width=.1))
+
+#FirstFlowerDay1Plot
+
+FirstFlowerDay2Plot<- ggplot(FirstFlowerDay2, aes(y = BluePref, x = Social_Cue)) + geom_point( position=pd,size=3) + labs(x="Social Cue", y="Proportion of Bees that First Visited Blue Flower", title="Proportion of Foragers that Chose Blue Flower on First Visit to Flower on Day 2") + theme_classic() + scale_color_hue() + geom_hline(yintercept=0.5,linetype="dashed", color = "black")+ geom_errorbar(aes(ymin=lower, ymax=upper, width=.1))
+
+#FirstFlowerDay2Plot
+
+#combining both data sets so that these graphs can be two facets of the same figure
+#add a column for day of trials (1 or 2)
+#change column names to blue and not.blue
+Day1=c(1,1,1)
+FirstFlowerDay1= FirstFlowerDay1 %>%
+  add_column(Day=Day1)
+
+FirstFlowerDay1=FirstFlowerDay1 %>%
+    mutate(blue=blue.treatment) %>%
+  mutate(not.blue=green.treatment)
+
+Day2=c(2,2,2)
+FirstFlowerDay2=FirstFlowerDay2 %>%
+  add_column(Day=Day2)
+
+FirstFlowerDay2=FirstFlowerDay2 %>%
+    mutate(blue=blue.test) %>%
+  mutate(not.blue=violet.test)
+
+FirstFlowerBothDays=bind_rows(FirstFlowerDay1, FirstFlowerDay2)
+
+factlabelsday=c("Day 1- Treatment", "Day 2- Test")
+names(factlabelsday) = c(1,2)
+
+
+FirstFlowerPlot<- ggplot(FirstFlowerBothDays, aes(y = BluePref, x = Social_Cue, color=Social_Cue)) + geom_point( position=pd,size=3) + labs(x="Social Cue", y="Proportion of Bees that Visited Blue Flower First", title="Bees' First Choice of Flower") + theme_classic() + scale_color_hue() + geom_hline(yintercept=0.5,linetype="dashed", color = "black")+ geom_errorbar(aes(ymin=lower, ymax=upper, width=.1))+ facet_grid(.~Day, labeller=labeller(Day = factlabelsday)) + scale_fill_discrete(name = "Social Cue Treatment")+scale_color_manual(values = c(control="darkgoldenrod", honest="cornflowerblue", misleading="darkolivegreen4"))
+
+FirstFlowerPlot
+
+
+
+#Glmm's
+firstDay1model=glm(BluePref~Social_Cue, family=binomial, data=FirstFlowerDay1)
+summary(firstDay1model)
+#Social_Cuehonest       0.2513     2.9948   0.084    0.933
+#Social_Cuemisleading  -1.0136     2.9203  -0.347    0.729
+FirstFlowerDay1$Social_Cue=factor(FirstFlowerDay1$Social_Cue, levels(factor(FirstFlowerDay1$Social_Cue))[c(3,1,2)])
+firstDay1model2=glm(BluePref~Social_Cue, family=binomial, data=FirstFlowerDay1)
+summary(firstDay1model2)
+#Social_Cuecontrol    1.014      2.920   0.347    0.729
+#Social_Cuehonest     1.265      2.982   0.424    0.671
+
+
+firstDay2model=glm(BluePref~Social_Cue, family=binomial, data=FirstFlowerDay2)
+summary(firstDay2model)
+#Social_Cuehonest     -0.13513    2.83408  -0.048    0.962
+#Social_Cuemisleading  0.19956    2.83325   0.070    0.944
+FirstFlowerDay2$Social_Cue=factor(FirstFlowerDay2$Social_Cue, levels(factor(FirstFlowerDay2$Social_Cue))[c(3,1,2)])
+firstDay2model2=glm(BluePref~Social_Cue, family=binomial, data=FirstFlowerDay2)
+summary(firstDay2model2)
+#Social_Cuecontrol  -0.1996     2.8332  -0.070    0.944
+#Social_Cuehonest   -0.3347     2.8384  -0.118    0.906
+
+# reference text
+preNaive=all.colorcast %>%
+  filter(pre.post=="pre") %>%
+  filter(Neonic=="n")
+
+preNaive.glmm=glmer(cbind(blue,not.blue)~Social_Cue+(1|Colony/bee), family=binomial, data=preNaive)
+summary(preNaive.glmm)
+Anova(preNaive.glmm)
+#misleading is sig diff from control p =0.0165, honest is not sig dif p=0.1408
+
+postNaive=all.colorcast %>%
+  filter(pre.post=="post") %>%
+  filter(Neonic=="n")
+
+postNaive.glmm=glmer(cbind(blue,not.blue)~Social_Cue+(1|Colony/bee), family=binomial, data=postNaive)
+summary(postNaive.glmm)
+Anova(postNaive.glmm)
+#misleading p=0.156, honest p=0.918
+
+
+#can i relevel the factors?
+#all.RewardsPerTreatment1$Social_Cue = factor(all.RewardsPerTreatment1$Social_Cue, levels(factor(all.RewardsPerTreatment1$Social_Cue))[c(1,3,2)])
+
+preNaive$Social_Cue=factor(preNaive$Social_Cue, levels(factor(preNaive$Social_Cue))[c(3,1,2)])
+  
+preNaive2.glmm=glmer(cbind(blue,not.blue)~Social_Cue+(1|Colony/bee), family=binomial, data=preNaive)
+summary(preNaive2.glmm)
+#control(p=0.016454) and honest(p=0.000153) both significantly different from misleading
+
+postNaive$Social_Cue=factor(postNaive$Social_Cue, levels(factor(postNaive$Social_Cue))[c(3,1,2)])
+
+postNaive2.glmm=glmer(cbind(blue,not.blue)~Social_Cue+(1|Colony/bee), family=binomial, data=postNaive)
+summary(postNaive2.glmm)
+#neither is significant control p=0.156, honest p=0.202
+
+```
 
 
 #What if all the flowers are blue?
@@ -2083,7 +2432,7 @@ Day12labs <- c("Day 1", "Day 2")
 
 
 
-ball.plot <- ggplot(ball.RewardsPerTreatment, aes(group=Treatment_Type, color = Treatment_Type, y = SumRewardSpaceRewards/SumTotalRewards, x = pre.post)) + geom_point( position=pd,size=3) + geom_line(aes(group = Treatment_Type),, size=3, position=pd) + labs(x="Day of Foraging", y="Proportion of Visits to Day1 Rewarding Flower", title="Proportion of Visits to Each of Two Blue Flowers")+ scale_x_discrete(labels= Day12labs) + theme_classic() + geom_errorbar(aes(ymin=lower, ymax=upper, width=.1), position=pd) + coord_cartesian(xlim = c(1.4,1.9), ylim = c(0.3,0.9))+ scale_color_hue() + geom_hline(yintercept=0.5,linetype="dashed", color = "black") + scale_color_manual(values = c(c="darkgoldenrod", h="cornflowerblue", m="darkolivegreen4"), name="Social Cue", labels=c("Control", "Honest", "Misleading"))
+ball.plot <- ggplot(ball.RewardsPerTreatment, aes(group=Treatment_Type, color = Treatment_Type, y = SumRewardSpaceRewards/SumTotalRewards, x = pre.post)) + geom_point( position=pd,size=3) + geom_line(aes(group = Treatment_Type), size=3, position=pd) + labs(x="Day of Foraging", y="Proportion of Visits to Day1 Rewarding Flower", title="Proportion of Visits to Each of Two Blue Flowers")+ scale_x_discrete(labels= Day12labs) + theme_classic() + geom_errorbar(aes(ymin=lower, ymax=upper, width=.1), position=pd) + coord_cartesian(xlim = c(1.4,1.9), ylim = c(0.3,0.9))+ scale_color_hue() + geom_hline(yintercept=0.5,linetype="dashed", color = "black") + scale_color_manual(values = c(c="darkgoldenrod", m="darkolivegreen4", h="cornflowerblue"), name="Social Cue", labels=c("Control", "Misleading", "Honest"))
 
 ball.plot
 ```
@@ -2107,6 +2456,7 @@ BluePropV=as.vector(Gsumtest.prep$BlueProp)
 BluePropV
 
 bGsummatrprep=select(bGsumtest.prep, sumDay1RewFlower, sumDay1NotRewFlower)
+bGsummatrprep
 bgsummatr=as.matrix(bGsummatrprep, header=TRUE)
 bgsummatr=bgsummatr[,c(2,3)]
 class(bgsummatr)
@@ -2135,6 +2485,85 @@ G.test(bobMpr, expected)
 #G =5.6358      , df = 1, p-value =0.0176 
 
 ```
+
+#How many all blue bees?
+```{r}
+#overall
+btotalbees=count(bcolordata, bee)
+#btotalbees=28 rows
+
+
+#control 
+bControl= bcolordata %>% 
+  filter(Treatment_Type=="c") %>%
+  count(bee)
+#bControl=14 rows
+
+
+
+#honest, no
+bHonest= bcolordata %>% 
+  filter(Treatment_Type=="h") %>%
+  count(bee)
+#HonestNoPest = 6
+
+
+#miselading
+bMisleading= bcolordata %>% 
+  filter(Treatment_Type=="m") %>%
+  count(bee)
+#MislNoPest=7
+
+```
+
+
+#"posthoc" glmms for bee paper 1
+don't call these posthoc comparisons, just report that "I divided the data to assess differences in training groups in the pre and post condition. we conducted separate followup anaylses byt training tpes. specicaflly, in the pre condiditon, we compared each of the social info treatments to the control andlaso to the honest (to see if theyre really following social cues). In the post data, we want to see if mislead bees behave differently from the other two groups."
+-berry says to do separate glmms, one for pre and one for post (so social info cue is the only variable, and control is the reference variable. I'll get two p values (one for honest and one for misleading, each is compared to control)(ideally both contrasts will be significant). next, for the social cue factor, run the levels (or relevel) command and say ref=misleading- so then the next model will compare control and honest each to misleading. 
+
+
+```{r}
+
+preNaive=all.colorcast %>%
+  filter(pre.post=="pre") %>%
+  filter(Neonic=="n")
+
+preNaive.glmm=glmer(cbind(blue,not.blue)~Social_Cue+(1|Colony/bee), family=binomial, data=preNaive)
+summary(preNaive.glmm)
+Anova(preNaive.glmm)
+#misleading is sig diff from control p =0.0165, honest is not sig dif p=0.1408
+
+postNaive=all.colorcast %>%
+  filter(pre.post=="post") %>%
+  filter(Neonic=="n")
+
+postNaive.glmm=glmer(cbind(blue,not.blue)~Social_Cue+(1|Colony/bee), family=binomial, data=postNaive)
+summary(postNaive.glmm)
+Anova(postNaive.glmm)
+#misleading p=0.156, honest p=0.918
+
+
+#can i relevel the factors?
+#all.RewardsPerTreatment1$Social_Cue = factor(all.RewardsPerTreatment1$Social_Cue, levels(factor(all.RewardsPerTreatment1$Social_Cue))[c(1,3,2)])
+
+preNaive$Social_Cue=factor(preNaive$Social_Cue, levels(factor(preNaive$Social_Cue))[c(3,1,2)])
+  
+preNaive2.glmm=glmer(cbind(blue,not.blue)~Social_Cue+(1|Colony/bee), family=binomial, data=preNaive)
+summary(preNaive2.glmm)
+#control(p=0.016454) and honest(p=0.000153) both significantly different from misleading
+
+postNaive$Social_Cue=factor(postNaive$Social_Cue, levels(factor(postNaive$Social_Cue))[c(3,1,2)])
+
+postNaive2.glmm=glmer(cbind(blue,not.blue)~Social_Cue+(1|Colony/bee), family=binomial, data=postNaive)
+summary(postNaive2.glmm)
+#neither is significant control p=0.156, honest p=0.202
+
+```
+
+
+
+
+
 
 
 
